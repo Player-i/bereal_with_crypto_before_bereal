@@ -1,0 +1,175 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+      * {
+    font-family: "Rubik", sans-serif;
+  }
+  .container{
+    max-width: 700px;
+    width: min(300px, 70%);
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 5px;
+    min-height: 100%;
+    
+    margin-bottom: 10%;
+  }
+  .container .register{
+    font-size: 20px;
+    font-weight: 500;
+    position: relative; 
+  }
+
+  .container .register::before{
+    content: "";
+    position: absolute;
+    height: 3px;
+    width: 30px;
+    /* background: linear-gradient(-45deg, #00adb3, #0052e9, #001f58); */
+  }
+
+  .container form .user-details{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+  form .user-details .form-floating mb-3{
+    width: calc(100%/ 2 - 20px);
+  }
+
+  form .user-details .form-floating mb-3 input{
+    height: 45px;
+    width: 70%;
+    border-radius: 5px;
+  }
+
+  form .button{
+    height: 45px;
+    margin: 45px 0;
+    margin-top: 2px;
+    transition:0.5s all;
+    /* background: linear-gradient(-45deg, #00adb3, #0052e9, #001f58); */
+    animation: gradient 8s ease infinite;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #0c0c0c;
+  }
+  form .button input{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    color: #fff;
+    border: none;
+    font-size: 500;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 0%;
+    border-radius: 5px;
+    transition:0.5s;
+    
+
+  }
+  /* form .button:hover{
+    background: linear-gradient(-45deg, #00adb3, #003aa7, #703dfd, #FFC947);
+    
+  } */
+  .form__input{
+    font-family: 'Rubik', sans-serif;;
+    padding-bottom: 1px;
+    padding-right: 50px;
+    padding-left: 5px;
+    background-color: rgb(243, 243, 243);
+    font-size: 15px;
+    border-color: rgb(251, 252, 252);
+    border: 1px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+    display: flex;
+    flex: 1;
+    width: 100%;
+
+    
+  }
+
+  .submit_picture {
+    margin-bottom: 0px;
+    padding: 0%;
+  }
+
+
+  @keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 80% 40%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+  }
+  
+  h1 {
+    color:black;
+    display: flex;
+    font-family: 'Rubik', sans-serif;
+  }
+
+  h3 {
+    color:black;
+  }
+  h4 {
+    color:black;
+  }
+  a {
+    color:black;
+  }
+  a:hover {
+    text-decoration: none;
+    color: black;
+  }
+  label {
+    color:black;
+  }
+  #id_profile_image {
+   opacity: 0;
+   position: absolute;
+   z-index: -1;
+}
+</style>
+
+<div class="lines">
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="line"></div>
+</div>
+<form method="POST" action='' class='text-center' enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container">
+    <div class="container-fluid justify-content-center">
+      <h1>Neuraltrain</h1>
+    </div>
+    <div class="user_details">
+      
+  <div class="input_box">
+      <input type="email" name="email" maxlength="60" autofocus required id="id_email" class="form__input" placeholder="Email">
+    </p>
+      </div>
+    <p>
+      <div class="input_box">
+      <input type="password" name="password" autocomplete="new-password" required id="id_password1" class="form__input" placeholder="Password">
+      </p>
+      </div>
+      {% for error in registration_form.errors %}
+        <p style="color: indianred;">{{error}}</p>
+      {% endfor %}
+    </p>
+  <div class="button">
+    <input class="button" type="submit" name='signin' value="Sign in"><br>
+  </div>
+</div>
+  <hr>
+  <p>Don't have an account?<a href="{% url 'accounts:register' %}" style="color: rgb(57, 144, 214);"> Sign up</a></p>
+</form>
+{% endblock %}

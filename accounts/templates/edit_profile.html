@@ -1,0 +1,207 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+  * {
+    font-family: "Rubik", sans-serif;
+  }
+
+  body {
+    background: linear-gradient(-45deg, #00fff2, #2a62ff, #973dfd, #ffc400);
+
+    background-size: 200% 200%;
+    animation: gradient 8s ease infinite;
+    display: flex;
+    height: 100vh;
+    align-items: center;
+  }
+  .container {
+    margin-top: -80px;
+    max-width: 700px;
+    width: min(300px, 70%);
+    padding: 25px 30px;
+    background: #fff;
+    border-radius: 5px;
+    min-height: 100%;
+    align-content: center;
+  }
+  .container .register {
+    font-size: 20px;
+    font-weight: 500;
+    position: relative;
+  }
+
+  .container .register::before {
+    content: "";
+    position: absolute;
+    height: 3px;
+    width: 30px;
+    /* background: linear-gradient(-45deg, #00adb3, #0052e9, #001f58); */
+  }
+
+  .container form .user-details {
+    display: flex;
+    margin: 0 auto;
+    /* justify-content: space-between; */
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+  form .user-details .form-floating mb-3 {
+    width: calc(100% / 2 - 20px);
+  }
+
+  form .user-details .form-floating mb-3 input {
+    height: 45px;
+    width: 70%;
+    border-radius: 5px;
+  }
+
+  form .button {
+    height: 45px;
+    margin: 45px 0;
+    margin-top: 2px;
+    transition: 0.5s all;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #973dfd;
+  }
+  form .button input {
+    height: 100%;
+    width: 100%;
+    outline: none;
+    color: #fff;
+    border: none;
+    font-size: 500;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 0%;
+    border-radius: 5px;
+    transition: 0.5s;
+  }
+  /* form .button:hover{
+    background: linear-gradient(-45deg, #00adb3, #003aa7, #703dfd, #FFC947);
+    
+  } */
+  .form__input {
+    font-family: "Rubik", sans-serif;
+    padding-bottom: 1px;
+    padding-right: 50px;
+    padding-left: 5px;
+    background-color: rgb(243, 243, 243);
+    font-size: 15px;
+    border-color: rgb(251, 252, 252);
+    border: 1px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+    display: flex;
+    flex: 1;
+    width: 100%;
+  }
+
+  .submit_picture {
+    margin-bottom: 0px;
+    padding: 0%;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 80% 40%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  h1 {
+    color: black;
+    display: flex;
+  }
+
+  .neuraltrain {
+    font-family: "Rubik", sans-serif;
+  }
+
+  h3 {
+    color: black;
+  }
+  h4 {
+    color: black;
+  }
+  a {
+    color: black;
+  }
+  a:hover {
+    text-decoration: none;
+    color: black;
+  }
+  label {
+    color: black;
+  }
+  #id_profile_image {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+  }
+</style>
+<form method="POST" class="text-center" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container">
+    <div class="container-fluid justify-content-center">
+      <div class="neuraltrain">
+        <h1>Edit profile</h1>
+      </div>
+    </div>
+    <div class="user_details">
+      <div class="form-floating mb-3">
+        <input
+          type="email"
+          name="email"
+          value="{{request.user.email}}"
+          maxlength="60"
+          required=""
+          id="id_email"
+          class="form__input"
+        />
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          name="username"
+          value="{{request.user.username}}"
+          maxlength="30"
+          required=""
+          id="id_username"
+          id="username"
+          class="form__input"
+        />
+      </div>
+      <input
+        type="file"
+        name="profile_image"
+        accept="image/*"
+        id="id_profile_image"
+      />
+      <div class="submit_picture">
+        <label class="btn" for="id_profile_image"
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="70"
+            height="70"
+            fill="currentColor"
+            class="bi bi-person-circle"
+            viewBox="0 0 16 16"
+          >
+            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+            <path
+              fill-rule="evenodd"
+              d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
+            /></svg
+        ></label>
+      </div>
+    </div>
+    <br />
+    <button action="" type="submit" class="btn primary">Save changes</button>
+  </div>
+</form>
+{% endblock %}

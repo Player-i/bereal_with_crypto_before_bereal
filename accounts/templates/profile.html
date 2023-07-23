@@ -1,0 +1,242 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+    * {
+    font-family: "Rubik", sans-serif;
+  }
+  body {
+    background: linear-gradient(-45deg, #00fff2, #2a62ff, #973dfd, #ffc400);
+    
+    background-size: 500% 500%;
+    animation: gradient 8s ease infinite;
+    display: flex;
+    align-items: center;
+  }
+
+  .container{
+    max-width: 1000px;
+    width: 650px;
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 5px;
+    min-height: 100%;
+    
+    
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 80% 40%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  #follow_button_link {
+    text-decoration: none;
+  }
+
+  .user_posts img {
+    object-fit: cover;
+    border-radius: 0.5rem;
+    max-width: 40%;
+    height: 270px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    float: left;
+    margin-right: 25px;
+    margin-left: 15px;
+  }
+  .post-box {
+    display: table;
+    margin-right: 20px;
+    margin-left: 15px;
+    
+  }
+  .img-responsive {
+    clip-path: inset(10% 1% 50px 12px);
+ 
+    max-height: 500px;
+    max-width: 500px;
+    width: 500px;
+    height: 500px;
+    margin-right: 20px;
+
+  }
+
+  h3 {
+    margin-top: 17px;
+    color: black;
+    display: flex;
+    font-family: "Rubik", sans-serif;
+    margin-right: 35px;
+    float: left;
+  }
+  #setting-btn {
+    margin-top: 12px;
+    margin-bottom: 20px;
+  }
+  .number-of-posts {
+    margin-left: 40px;
+  }
+  .follow-unfollow {
+    padding-top: 15px;
+  }
+  .profile-buttons{
+    position: relative;
+    right: 145px;
+    padding-top: 20px;  
+    }
+
+
+    a:-webkit-any-link {
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+</style>
+{% if  profile_user %}
+<div name="profile_general">
+  <div class="container">
+  {% if user.profile_image %}
+  <div class="profile-pic">
+    <img
+      src="{{ profile_user.profile_image.url }}"
+      class="img-circle"
+      style="width: 20%; float: left; margin-right: 5%;"
+    />
+  </div>
+  {% endif %}
+  <div>
+    <div>
+      <div class="important-user-info">
+        <h3>{{profile_user.username}}</h3>
+        {% if request.user == profile_user %}
+        <a href="{% url 'edit_profile' user.username %}"
+          ><button action="" type="submit" class="btn primary" id="setting-btn">
+            Edit profile
+          </button>
+        </a>
+      </div>
+    </div>
+
+    {% else %}
+    <div class="follow-unfollow">
+    <a href="{% url 'accounts:follow' profile_user %}" id="follow_button_link">
+      <button id="follow_button" type="submit" class="btn primary">
+        {% if request.user not in profile_user.followers.all %} Follow {% else%}
+        Unfollow {% endif %}
+      </button>
+    </a>
+    <a href="">
+      {% if request.user in profile_user.followers.all %}
+      <button id="message_button" type="submit" class="btn primary">
+        Message
+      </button>
+      {% endif %}
+    </a>
+  </div>
+    {% endif %}
+  </div>
+  <div >
+    {% if request.user == profile_user %}
+    <font size="4" style="float: left; margin-right: 4%;" >
+      <p >
+        <strong id="{{profile_user}}followers" 
+          >{{profile_user.followers.count}}</strong
+        >
+        followers
+      </p>
+    </font>
+    <font size="4">
+      <p>
+        <strong id="{{profile_user}}following" 
+          >{{profile_user.following.count}}</strong
+        >
+        following
+      </p>
+    
+    <div style="margin-left: 5%">
+      <strong><p style="float: left">{{profile_user.coins}} coins</p></strong>
+
+      <p >
+        <strong id="{{user_total_posts}}posts"class="number-of-posts">{{user_total_posts}} posts</strong>
+        
+      </p>
+    </div>
+  </div>
+  {% else %}
+  <font size="4" style="float: left; margin-right: 4%;" >
+    <p class="profile-buttons">
+      <strong id="{{profile_user}}followers" 
+        >{{profile_user.followers.count}}</strong
+      >
+      followers
+    </p>
+  </font>
+  <font size="4">
+    <p class="profile-buttons">
+      <strong id="{{profile_user}}following" 
+        >{{profile_user.following.count}}</strong
+      >
+      following
+    </p>
+  
+  <div style="margin-left: 5%">
+    <strong><p style="float: left">{{profile_user.coins}} coins</p></strong>
+
+    <p >
+      <strong id="{{user_total_posts}}posts"class="number-of-posts">{{user_total_posts}} posts</strong>
+      
+    </p>
+  </div>
+</div>
+
+  {% endif %}
+</container>
+<br />
+<div class="post-box">
+  {% for post in all_posts %}
+
+  <div class="user_posts">
+    <img src="{{ post.image.url }}" class="img-responsive"  style="float: left" />
+  </div>
+  {% endfor %}
+</div>
+</div>
+</div>
+</div>
+{% else %}
+<div class="container"><h1>No answers found</h1></div>
+{% endif %}
+<script>
+  document
+    .getElementById("follow_button")
+    .addEventListener("click", function (event) {
+      event.preventDefault();
+      $.ajax({
+        url: "{% url 'accounts:follow' profile_user %}",
+        type: "POST",
+        data: {
+          follow_logic: document.getElementById("follow_button").innerText,
+          followers: "{{profile_user.followers.count}}",
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        dataType: "json",
+        success: function (json) {
+          document.getElementById("{{profile_user}}followers").innerHTML =
+            json.followers;
+          if (json.follow_logic == "Follow") {
+            document.getElementById("follow_button").innerText = "Unfollow";
+          } else {
+            document.getElementById("follow_button").innerText = "Follow";
+          }
+        },
+      });
+    });
+</script>
+{% endblock %}

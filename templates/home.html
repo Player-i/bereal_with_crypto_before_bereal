@@ -1,0 +1,405 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+	* {
+    	font-family: "Rubik", sans-serif;
+  	}
+	a {
+		color: black;
+	}
+	a:hover {
+		text-decoration: none;
+		color: black;
+	}
+    .modal-container {
+        background-color: rgba(0, 0, 0, 0.2);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .modal-container.show {
+        opacity: 1;
+        pointer-events: auto;
+
+    }
+    .quiz-modal {
+        background-color: rgb(255, 255, 255);
+        width: 600px;
+        max-width: 100%;
+        padding: 30px 50px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .quiz-modal h1 {
+        margin: 0;
+    }
+
+    .quiz-modal p {
+        font-size: 14px;
+        opacity: 0.7;
+    }
+
+	i {
+		font-size: 2em;
+		float: left;
+		margin-left: 2%;
+		cursor: pointer;
+	}
+    body {
+    /* background: linear-gradient(-45deg, #00adb3, #0034a3, #00163f); */
+    background: linear-gradient(-45deg, #00fff2, #2a62ff, #973dfd, #ffc400);
+    background-size: 150% 150%;
+    animation: gradient 8s ease infinite;
+    display: flex;
+    align-items: center;
+  }
+
+  @keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 80% 40%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+  }
+  a {
+    color:black;
+  }
+  a:hover {
+    text-decoration: none;
+    color: black;
+  }
+  .container{
+	padding-top: 10px ;
+	height: 75px;
+    background: #fff;
+    border-radius: 5px;
+    min-height: 100%;
+	width: 50%;
+    height: 50%;
+	padding-bottom: 3px;
+  }
+img {
+    max-width: 100%;
+    max-height: 100%;
+	}
+
+
+	.comments-container {
+        background-color: rgba(0, 0, 0, 0.2);
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .comments-container.show {
+        opacity: 1;
+        pointer-events: auto;
+
+    }
+
+	.comments-modal {
+        background-color: rgb(255, 255, 255);
+        width: 600px;
+        max-width: 100%;
+        padding: 30px 50px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+	.btn.primary {
+		margin-top: 15px;
+	}
+
+	.author-caption {
+		margin-top: -25px;
+	}
+
+
+	
+</style>
+{% if user.is_authenticated %}
+<div style="margin-top: 14%"></div>
+	{% for post in all_posts %}
+<div>
+	<div style="margin-top: 40px;" class="container">
+		<div>
+			<div>
+				<div>
+					<div>
+						<div style="line-height: 100%;">
+							<a href="{% url 'profile' post.author.username %}">
+								<img style='width: 2.5rem;' src="{{post.author.profile_image.url}}" class="rounded-circle article-img">
+								@{{post.author.username}}
+							</a>
+						</div>
+					</div>
+				</div>
+				<br>
+				{% if post.image %}
+				<img src="{{ post.image.url }}" width="350" height="400">
+				<div style='margin-left: 2%'>
+					<div>
+						<form action="{% url 'like' %}" method='POST'>
+						{% csrf_token %}
+						<div>
+							{% if request.user in post.likes.all %}
+							<i id='like {{post.id}}' style="float: left;" class="bi bi-heart-fill" style="font-size: 4rem"></i>
+							{% else %}
+							<i id='like {{post.id}}' style="float: left;" class="bi bi-heart" style="font-size: 4rem"></i>
+							{% endif %}
+						</div>
+					</form>
+					{% if post.author != request.user %}
+					{% if user not in post.users_did_quiz.all %}
+					<div id="user_did_quiz{{post.id}}">
+						<i class="bi bi-question-circle" id="open_quiz{{post.id}}" value="{{post.id}}" name="{{post.id}}"></i>
+					</div>
+					{% else %}
+					<div id="quiz_completed">
+						{% if user in post.users_right.all %}
+						<i id="completed_button" style="color:rgb(83, 199, 83)" class="bi bi-check-circle"></i>
+						{% else %}
+						<i id="completed_button" style="color:rgb(243, 66, 66)" class="bi bi-x-circle"></i>
+						{% endif %}
+					</div>
+					{% endif%}
+					{% endif %}
+					<!-- <p>{{post.users_did_quiz.count}} users already did the quiz</p> -->
+					<div class="modal-container" id="modal_container{{post.id}}">
+						<div class="quiz-modal" id="quiz-modal{{post.id}}">
+							<h1 id="quiz_question{{post.id}}">Question</h1>
+							<form method="post" action="{% url 'quiz_score' %}">
+								{% csrf_token %}
+								
+									<p id="countdown{{post.id}}"> Start Now</p>
+									
+										<input type="radio" id="option1_input{{post.id}}" name="quiz_option{{post.id}}"><label
+											id="option1_label{{post.id}}" class="form-check-label" for="flexCheckDefault" style="margin-bottom: 5px;"></label>
+											<br>
+									<input type="radio" id="option2_input{{post.id}}" name="quiz_option{{post.id}}"><label
+											id="option2_label{{post.id}}" class="form-check-label" for="flexCheckDefault" style="margin-bottom: 5px;"></label>
+											<br>
+								<input type="radio" id="option3_input{{post.id}}" name="quiz_option{{post.id}}"><label
+											id="option3_label{{post.id}}" class="form-check-label" for="flexCheckDefault"></label>
+							<br>
+								<button class="btn primary" type="submit" name="submit{{post.id}}" value="{{post.id}}" id="submit{{post.id}}">
+									Submit
+								</button>
+							</form>
+						</div>
+					</div>
+						{% if post.author == request.user %}
+						<a href="{% url 'delete' post.id %}">
+								<i class="bi bi-trash"></i>
+							</a>
+							<!-- <a href="{% url 'clear' post.id %}">
+								<button>
+									clear all users did quiz
+								</button> -->
+							</a>
+							{% endif %}
+						</div><br>
+						<div>
+							<div align='left' style='margin-top: 8%;' id='total_likes{{post.id}}'>
+								{{post.total_likes}} likes
+							</div><br>
+
+								<!-- <input onclick="loadComments()" type="button" value="Submit"><br>	 -->
+								<!-- {% for comment in post_comments %}
+								{{comment}}
+								{% endfor %} -->
+								<div align='left'>
+									<font size='4'>
+										<p>
+											<div class="author-caption">
+											<strong>
+												<a href="{% url 'profile' post.author.username %}">
+													{{post.author}}
+												</a>
+											</strong>
+											<p style="width:100%; word-wrap: break-word;">{{post.caption}}</p>
+										</div>
+										</p>
+									</font>
+								</div>
+							</div>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+				<script>
+			document.getElementById('like {{post.id}}').addEventListener('click', loadLikes)
+			function loadLikes(event) {
+				$.ajax({
+					url: "{% url 'like' %}",
+					type: "POST",
+					data: {'post_id': '{{post.id}}', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+					dataType: "json",
+					success: function (json) {
+						document.getElementById('total_likes{{post.id}}').innerHTML = json.total_likes + ' likes';
+						document.getElementById('like {{post.id}}').classList.add('bi bi-heart-fill');
+					}
+				})
+			event.preventDefault()
+			}
+			document.getElementById('open_quiz{{post.id}}').addEventListener('click', openQuiz)
+			function openQuiz() {
+				$.ajax({
+					url: "{% url 'quiz_view' %}",
+					type: "POST",
+					data: { "post_id": "{{post.id}}", 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+					dataType: "json",
+					success: function (json) {
+						const open = document.getElementById('open_quiz{{post.id}}');
+						const modal_container = document.getElementById('modal_container{{post.id}}');
+						const submit = document.getElementById('submit{{post.id}}');
+						
+						modal_container.classList.add("show");
+						
+						submit.addEventListener("click", () => {
+							modal_container.classList.remove("show");
+						});
+						// Question
+						document.getElementById("quiz_question{{post.id}}").innerHTML = json.question;
+						// Option 1
+						document.getElementById("option1_label{{post.id}}").innerHTML = json.option1;
+						var option1_input = document.getElementById("option1_input{{post.id}}");
+						option1_input.setAttribute("value", json.option1);
+						// Option 2
+						document.getElementById("option2_label{{post.id}}").innerHTML = json.option2;
+						var option2_input = document.getElementById("option2_input{{post.id}}");
+						option2_input.setAttribute("value", json.option2);
+						// Option 3
+						document.getElementById("option3_label{{post.id}}").innerHTML = json.option3;
+						var option3_input = document.getElementById("option3_input{{post.id}}");
+						option3_input.setAttribute("value", json.option3);
+						
+						setInterval(updateCountdown, 1000);
+						let seconds = 10;
+						function updateCountdown() {
+							document.getElementById("countdown{{post.id}}").innerHTML = seconds;
+							seconds--;
+						}
+						$.ajax({
+							type: "POST",
+							url: "{% url 'user_enter_quiz' %}",
+							data: { "post_id": "{{post.id}}", 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+							dataType: "json",
+							success: function (json) {
+							}
+						})
+						setTimeout(submitModal, 11000);
+						function submitModal() {
+							modal_container.classList.remove("show");
+							try {
+								quiz_option = document.querySelector('input[name = "quiz_option{{post.id}}"]:checked').value;
+							} catch {
+								quiz_option = null
+							}
+							$.ajax({
+								type: "POST",
+								url: "{% url 'quiz_score' %}",
+								data: { "post_id": "{{post.id}}", 'csrfmiddlewaretoken': '{{ csrf_token }}', "quiz_option": quiz_option},
+								dataType: "json",
+								success: function (json) {
+									if (json.user_right == true) {
+									const situation = '<i id="completed_button" style="color:rgb(83, 199, 83)" class="bi bi-check-circle"></i>'
+									document.getElementById('user_did_quiz{{post.id}}').innerHTML = situation;
+									
+								} else {
+									const situation = '<i id="completed_button" style="color:rgb(243, 66, 66)" class="bi bi-x-circle"></i>'
+									document.getElementById('user_did_quiz{{post.id}}').innerHTML = situation;	
+								}
+								
+								}
+							})
+						event.preventDefault()
+					}
+					document.getElementById('submit{{post.id}}').addEventListener('click', loadScore)
+					function loadScore() {
+						var quiz_option = document.querySelector('input[name = "quiz_option{{post.id}}"]:checked').value;	
+						$.ajax({
+							type: "POST",
+							url: "{% url 'quiz_score' %}",
+							data: { "post_id": "{{post.id}}", 'csrfmiddlewaretoken': '{{ csrf_token }}', "quiz_option": quiz_option },
+							dataType: "json",
+							success: function (json) {
+								if (json.user_right == true) {
+									const situation = '<i id="completed_button" style="color:rgb(83, 199, 83)" class="bi bi-check-circle"></i>'
+									document.getElementById('user_did_quiz{{post.id}}').innerHTML = situation;
+									
+								} else {
+									const situation = '<i id="completed_button" style="color:rgb(243, 66, 66)" class="bi bi-x-circle"></i>'
+									document.getElementById('user_did_quiz{{post.id}}').innerHTML = situation;	
+								}
+								}
+							})
+						event.preventDefault()
+					}
+				}
+			})
+		}
+		</script>
+
+		<script>
+			document.getElementById("comment{{post.id}}").addEventListener("click", loadComments) 
+
+				function loadComments() {
+
+								const comments_container = document.getElementById('comments_container{{post.id}}');
+								
+								const close_comments_container = document.getElementById('close_comments{{post.id}}');
+								comments_container.classList.add("show");
+								close_comments_container.addEventListener("click", () => { comments_container.classList.remove("show");});
+							}
+
+							
+			document.getElementById("post_comment{{post.id}}").addEventListener("click", postComment)
+			console.log("bien")
+			function postComment(e) {
+				
+				let comment = document.getElementById("input_comment{{post.id}}").value
+				console.log(comment)
+
+				$.ajax({
+							type: "POST",
+							url: "{% url 'post_comment' %}",
+							data: { "post_id": "{{post.id}}", 'csrfmiddlewaretoken': '{{ csrf_token }}', "comment": comment},
+							dataType: "json",
+							success: function (json) {
+								console.log("GG")
+
+
+			}
+			
+
+		})
+		event.preventDefault()
+	}
+			
+
+			
+		</script>
+	</div>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

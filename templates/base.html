@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&family=Roboto+Slab&family=Rubik:ital@1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+    />
+
+    <link
+      rel="icon"
+      href="https://img.search.brave.com/oH4k6o-8bLPxjRCs5rHfYcUTEe5W6QW5pasq2RkFxo4/rs:fit:1200:1200:1/g:ce/aHR0cHM6Ly93d3cu/dW5pdmVyc2V0b2Rh/eS5jb20vd3AtY29u/dGVudC91cGxvYWRz/LzIwMjAvMDIvQXJp/c3RvdGxlX0FsdGVt/cHNfSW52ODU3NS5q/cGc"
+    />
+
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Neuraltrain</title>
+    <style>
+      * {
+        border: 0;
+        padding: 0;
+        margin: 0;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+
+      i {
+        color: #973dfd;
+      }
+      i:hover {
+        color: #c28cff;
+      }
+
+      img {
+        width: 100%;
+        max-height: 100%;
+      }
+
+      .img-circle {
+        clip-path: circle();
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0px;
+      }
+
+      #navbar {
+        background-color: rgb(255, 255, 255);
+        
+      }
+
+      nav {
+        
+        display: block;
+        margin: 0;
+        padding: 10px;
+        position: fixed;
+        left: 0;
+        right: 0;
+        box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.2);
+        max-height: 65px;
+      }
+
+      .search-input .autocomplete-box {
+        padding: 0;
+        opacity: 0;
+        pointer-events: none;
+        max-height: 220px;
+        height: auto;
+        overflow-y: auto;
+        position: fixed;
+        background-color: #efefef;
+        width: 208px;
+      }
+
+      .search-input.active .autocomplete-box {
+        padding: 3px 8px;
+        margin-top: 10px;
+        opacity: 1;
+        pointer-events: auto;
+        border-radius: 5px;
+      }
+      .autocomplete-box li {
+        list-style: none;
+        padding: 2px 8px;
+        display: none;
+        width: 100%;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .search-input.active .autocomplete-box li {
+        display: block;
+      }
+      .autocomplete-box li:hover {
+        background: #efefef;
+      }
+      body {
+        /* background: linear-gradient(-45deg, #e6592e, #d2d5dd, #2642dd, #e2b221); */
+        background-color:#0c0c0c;
+        /* background-size: 200% 200%; */
+        /* animation: gradient 8s ease infinite; */
+        display: flex;
+        height: 100vh;
+        align-items: center;
+      }
+
+      /* Blue and Green */
+
+      .search_data {
+        box-sizing: border-box;
+        height: 40%;
+        width: 100%;
+        border-radius: 8px;
+        border-color: white;
+        border-style: none;
+        background-color: #f1eded;
+
+        margin-top: 5px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        padding-left: 10px;
+        
+
+        padding-right: 10px;
+        outline: none;
+        text-justify: auto;
+       
+        
+      }
+    </style>
+  </head>
+  <script
+    type="module"
+    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"
+  ></script>
+  <body>
+    <div style="width: 1000px; margin: auto">
+      <div id="navbar" class="justify-content">
+      {% if request.user.is_authenticated %}
+        <nav style="height: fit-content" id="navbar" class="navbar">
+          <a class="nav-link disabled" href="{% url 'submit_post' %}">
+            <i class="bi bi-plus-circle" style="font-size: 1.7rem; margin-left: 180px;"></i>
+          </a>
+          <a class="nav-link disabled" href="{% url 'home' %}">
+            <i id="home" class="bi bi-house" style="font-size: 1.7rem"></i>
+          </a>
+          <a class="nav-link disabled" href="{% url 'chats:room' %}">
+            <i class="bi bi-chat" style="font-size: 1.7rem"></i>
+          </a>
+          <a
+            class="nav-link disabled"
+            aria-current="page"
+            href="{% url 'accounts:leaderboard' %}"
+          >
+            <i class="bi bi-bar-chart" style="font-size: 1.7rem"></i>
+          </a>
+          <a class="nav-link disabled" href="{% url 'profile' user.username %}">
+            <img
+              src="{{user.profile_image.url}}"
+              class="img-circle"
+              alt=""
+              style="width: 2.5rem"
+            />
+          </a>
+          {% if user.is_superuser %}
+          <a
+            class="nav-link disabled"
+            href="{% url 'admin:index' %}"
+            target="_blank"
+          >
+            <i class="bi bi-file-earmark-lock2" style="font-size: 1.7rem"></i>
+          </a>
+          {% endif %}
+
+          <div class="search-input" id="search-input">
+            <input
+              autocomplete="off"
+              type="search"
+              id="search_data"
+              class="search_data"
+              placeholder="Search"
+            />
+            <div class="autocomplete-box" id="autocomplete-box"></div>
+          </div>
+
+          <a class="nav-link disabled" href="{% url 'accounts:logout' %}">
+            <i class="bi bi-door-open" style="font-size: 1.7rem"></i>
+          </a>
+          {% else %}
+          <div class="curve"></div>
+          {% endif %}
+        </div>
+      </nav>
+      <div style="margin-top: 10%"></div>
+      {% block content %} {% endblock %}
+    </div>
+  </body>
+  <script>
+    const searchWrapper = document.getElementById("search-input");
+    const inputBox = document.getElementById("search_data");
+    const suggBox = document.getElementById("autocomplete-box");
+
+    document.getElementById("search_data").addEventListener("click", loadData);
+    function loadData(e) {
+      $.ajax({
+        url: "{% url 'drop_box' %}",
+        type: "POST",
+        data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
+        dataType: "json",
+        success: function (json) {
+          let suggestions = json.users;
+
+          inputBox.onkeyup = (e) => {
+            let userData = e.target.value;
+            let emptyArray = [];
+            if (userData) {
+              emptyArray = suggestions.filter((data) => {
+                return data
+                  .toLocaleLowerCase()
+                  .startsWith(userData.toLocaleLowerCase());
+              });
+              emptyArray = emptyArray.map((data) => {
+                // passing return data inside li tag
+                return (data = `<li ><a id="first_url" href="http://200.88.178.71:5003/${data}/" >${data}</a></li>`);
+              });
+              searchWrapper.classList.add("active"); //show autocomplete box
+              showSuggestions(emptyArray);
+              let allList = suggBox.querySelectorAll("li");
+              for (let i = 0; i <= script.allList.length; i++) {
+                //adding onclick attribute in all li tag
+                allList[i].setAttribute("onclick", "select(this)");
+              }
+            } else {
+              searchWrapper.classList.remove("active"); //hide autocomplete box
+            }
+          };
+          function showSuggestions(list) {
+            let listData;
+            if (!list.length) {
+              userValue = inputBox.value;
+              listData = `<li><a id="first_url" href="http://200.88.178.71:5003/${userValue}/" >${userValue}</a></li>`;
+            } else {
+              listData = list.join("");
+            }
+           
+            suggBox.innerHTML = listData;
+          }
+        },
+      });
+    }
+    document.getElementById("search_data").onkeypress = function (e) {
+      if (!e) e = window.event;
+      var keyCode = e.code || e.key;
+      if (keyCode == "Enter") {
+        let url = document.getElementById("first_url").href;
+        window.location.replace(url);
+        return false;
+      }
+    };
+  </script>
+</html>

@@ -1,0 +1,12 @@
+{
+  "python.formatting.provider": "black",
+  "terminal.integrated.gpuAcceleration": "off",
+  "cSpell.words": [
+    "csrfmiddlewaretoken",
+    "Neuraltrain",
+    "Terrero",
+    "Unfollow",
+    "unfollower",
+    "unfollowing"
+  ]
+}

@@ -1,0 +1,105 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+  * {
+    font-family: "Rubik", sans-serif;
+  }
+  a {
+    color: black;
+  }
+  a:hover {
+    text-decoration: none;
+    color: black;
+  }
+
+  i {
+    font-size: 2em;
+    float: left;
+    margin-left: 2%;
+  }
+  body {
+    background: linear-gradient(-45deg, #00fff2, #2a62ff, #973dfd, #ffc400);
+    background-size: 200% 200%;
+    animation: gradient 8s ease infinite;
+    display: flex;
+    align-items: center;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 50% 40%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  .container {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 5px;
+    min-height: 100%;
+    margin-bottom: 20px;
+    width: 40%;
+  }
+  h3 {
+    text-align: center;
+  }
+  .button {
+    height: 45px;
+    margin: 45px 0;
+    margin-top: 2px;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #973dfd;
+    border: none;
+    color: #fff;
+    width: 100%;
+  }
+</style>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Chat Rooms</title>
+  </head>
+  <body>
+    <div style="margin-top: 40%" class="container">
+      <h3>New message to...</h3>
+      <br />
+      <div style="text-align: center">
+        <div class="input-group mb-3">
+          <input
+            id="room-name-input"
+            type="text"
+            class="form-control"
+            placeholder="Username"
+            aria-label="Username"
+            aria-describedby="basic-addon1"
+          />
+        </div>
+        <input
+          class="button"
+          id="room-name-submit"
+          type="button"
+          value="Enter"
+        />
+      </div>
+    </div>
+    <script>
+      document.querySelector('#room-name-input').focus();
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#room-name-submit').click();
+            }
+        };
+
+        document.querySelector('#room-name-submit').onclick = function(e) {
+            var roomName = document.querySelector('#room-name-input').value;
+            window.location.pathname = '/room/' + roomName + '/';
+        };
+    </script>
+    </script>
+  </body>
+</html>
+{% endblock %}

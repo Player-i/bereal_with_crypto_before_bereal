@@ -1,0 +1,107 @@
+{% extends 'base.html' %} {% block content %}
+<style>
+  * {
+    font-family: "Rubik", sans-serif;
+  }
+  a {
+    color: black;
+  }
+  a:hover {
+    text-decoration: none;
+    color: black;
+  }
+
+  body {
+    background: linear-gradient(-45deg, #00fff2, #2a62ff, #973dfd, #ffc400);
+    background-size: 300% 300%;
+    animation: gradient 8s ease infinite;
+    display: flex;
+    align-items: center;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 60% 10%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .content-table {
+    border-collapse: collapse;
+    margin: 30px 0;
+    font-size: 0.9em;
+    min-width: 400px;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .content-table tr {
+    background-color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+  }
+
+  .content-table th,
+  .content-table td {
+    border: none;
+    padding: 12px 15px;
+  }
+
+  .content-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+  }
+
+  .content-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+  }
+
+  .content-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+  }
+
+  h1 {
+    color: white;
+  }
+</style>
+<div align="center">
+  <h1 class="text-center">Leaderboard</h1>
+  <table class="content-table">
+    <tr style="background-color: #973dfd; color: white">
+      <div>
+        <th>username</th>
+        <th>profile picture</th>
+        <th>last login</th>
+        <th>coins</th>
+        <th>followers</th>
+        <th>following</th>
+      </div>
+    </tr>
+    {% for user in users %}
+    <tr>
+      <td><a href="{% url 'profile' user.username %}">{{user.username}}</a></td>
+      <td>
+        <a href="{% url 'profile' user.username %}">
+          <img
+            src="{{user.profile_image.url}}"
+            class="img-circle article-img"
+            alt=""
+            style="width: 4rem"
+          />
+        </a>
+      </td>
+      <td>{{user.last_login}}</td>
+      <td>{{user.coins}}</td>
+      <td>{{user.followers.count}}</td>
+      <td>{{user.following.count}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
